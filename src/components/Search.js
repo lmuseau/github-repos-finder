@@ -26,14 +26,27 @@ function Search() {
         return response.json();
       })
       .then(data => {
-        console.log(data);
         setIsLoading(false);
         setRepos(data.items);
       })
       .catch(err => {
         setIsError(true);
-        console.log(err)
       })
+  }
+
+  const addRepo = (repo) => {
+    let displayedRepos = localStorage.getItem('myData')
+    displayedRepos = JSON.parse(displayedRepos)
+    console.log(displayedRepos)
+    if (!displayedRepos) {
+      displayedRepos = [repo]
+    } else {
+      if (displayedRepos.indexOf(repo) === -1) {
+        displayedRepos.push(repo)
+        console.log(displayedRepos)
+      }
+    }
+    localStorage.setItem('myData', JSON.stringify(displayedRepos))
   }
 
 
@@ -54,6 +67,7 @@ function Search() {
           <Table.Row>
             <Table.HeaderCell>Repository</Table.HeaderCell>
             <Table.HeaderCell>Release Date</Table.HeaderCell>
+            <Table.HeaderCell>Add To Home Page</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
 
@@ -70,6 +84,7 @@ function Search() {
           </Header>
         </Table.Cell>
         <Table.Cell>{repo.updated_at}</Table.Cell>
+        <Table.Cell><Button onClick={() => addRepo(repo)}>Add</Button></Table.Cell>
         </Table.Row>
         })}
         </Table.Body>
