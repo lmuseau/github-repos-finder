@@ -36,6 +36,7 @@ function Search() {
   }
 
   const addRepo = (repo) => {
+    alert('Added ' + repo.name)
     let displayedRepos = localStorage.getItem('myData')
     displayedRepos = JSON.parse(displayedRepos)
     if (!displayedRepos) {
