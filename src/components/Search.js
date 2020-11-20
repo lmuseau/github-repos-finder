@@ -38,7 +38,6 @@ function Search() {
   const addRepo = (repo) => {
     let displayedRepos = localStorage.getItem('myData')
     displayedRepos = JSON.parse(displayedRepos)
-    console.log(displayedRepos)
     if (!displayedRepos) {
       fetch(repo.releases_url.slice(0, -5) + '/latest')
         .then(response => {
@@ -46,6 +45,8 @@ function Search() {
         })
         .then(data => {
           repo.releaseDate = data.published_at || data.message
+          repo.latestReleaseInfo = data.body
+          repo.new = true
           displayedRepos = [repo]
           localStorage.setItem('myData', JSON.stringify(displayedRepos))
         })
@@ -57,8 +58,9 @@ function Search() {
           })
           .then(data => {
             repo.releaseDate = data.published_at || data.message
+            repo.latestReleaseInfo = data.body
+            repo.new = true
             displayedRepos.push(repo)
-            console.log(displayedRepos)
             localStorage.setItem('myData', JSON.stringify(displayedRepos))
           })
       }
