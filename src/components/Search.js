@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Form, Button, Container, Header, Image, Table, Loader } from 'semantic-ui-react'
+import Moment from 'react-moment';
 import './Search.css';
 
 
@@ -39,14 +40,29 @@ function Search() {
     displayedRepos = JSON.parse(displayedRepos)
     console.log(displayedRepos)
     if (!displayedRepos) {
-      displayedRepos = [repo]
+      fetch(repo.releases_url.slice(0, -5) + '/latest')
+        .then(response => {
+          return response.json();
+        })
+        .then(data => {
+          repo.releaseDate = data.published_at || data.message
+          displayedRepos = [repo]
+          localStorage.setItem('myData', JSON.stringify(displayedRepos))
+        })
     } else {
       if (displayedRepos.indexOf(repo) === -1) {
-        displayedRepos.push(repo)
-        console.log(displayedRepos)
+        fetch(repo.releases_url.slice(0, -5) + '/latest')
+          .then(response => {
+            return response.json();
+          })
+          .then(data => {
+            repo.releaseDate = data.published_at || data.message
+            displayedRepos.push(repo)
+            console.log(displayedRepos)
+            localStorage.setItem('myData', JSON.stringify(displayedRepos))
+          })
       }
     }
-    localStorage.setItem('myData', JSON.stringify(displayedRepos))
   }
 
 
@@ -73,7 +89,7 @@ function Search() {
 
         <Table.Body>
         {repos.map(repo => {
-        return <Table.Row>
+        return <Table.Row key={repo.id}>
         <Table.Cell>
           <Header as='h4' image>
             <Image src={repo.owner.avatar_url} rounded size='mini' />
@@ -83,7 +99,7 @@ function Search() {
             </Header.Content>
           </Header>
         </Table.Cell>
-        <Table.Cell>{repo.updated_at}</Table.Cell>
+        <Table.Cell><Moment format="YYYY/MM/DD">{repo.updated_at}</Moment></Table.Cell>
         <Table.Cell><Button onClick={() => addRepo(repo)}>Add</Button></Table.Cell>
         </Table.Row>
         })}

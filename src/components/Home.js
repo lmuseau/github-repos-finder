@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Icon, Container, Table } from 'semantic-ui-react'
+import { Button, Icon, Container, Table, Image } from 'semantic-ui-react'
+import Moment from 'react-moment';
 import './Home.css';
 
 
@@ -17,8 +18,13 @@ class Home extends React.Component {
     let data = localStorage.getItem('myData');
     data = JSON.parse(data)
     console.log(data)
-    this.state.repos = data
-    console.log(this.state.repos)
+    if (!data) {
+      this.state.repos = data
+    } else {
+      this.setState({
+        repos: data
+      })
+    }
   }
 
   render() {
@@ -33,20 +39,22 @@ class Home extends React.Component {
         <Table celled striped>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell colSpan='3'>Git Repository</Table.HeaderCell>
+              <Table.HeaderCell></Table.HeaderCell>
+              <Table.HeaderCell>Git Repository</Table.HeaderCell>
+              <Table.HeaderCell>Owner</Table.HeaderCell>
+              <Table.HeaderCell>Latest Release Date</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
   
           <Table.Body>
-            <Table.Row>
-              <Table.Cell collapsing>
-                <Icon name='folder' /> node_modules
-              </Table.Cell>
-              <Table.Cell>Initial commit</Table.Cell>
-              <Table.Cell collapsing textAlign='right'>
-                10 hours ago
-              </Table.Cell>
+            {this.state.repos.map(repo => {
+              return <Table.Row key={repo.id}>
+              <Table.Cell collapsing textAlign='center'><Image src={repo.owner.avatar_url} rounded size='mini' /></Table.Cell>
+              <Table.Cell textAlign='center'>{repo.name}</Table.Cell>
+              <Table.Cell textAlign='center'>{repo.owner.login}</Table.Cell>
+              <Table.Cell textAlign='left'><Moment format='YYYY/MM/DD'>{repo.releaseDate}</Moment></Table.Cell>
             </Table.Row>
+            })}
           </Table.Body>
         </Table>
       </Container>
